@@ -1,0 +1,30 @@
+<application xmlns:soa="http://www.oracle.com/soa/rest" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ns0="http://www.example.org" xmlns="http://wadl.dev.java.net/2009/02">
+   <doc title="ERPIntegrationAPIRest">RestReference</doc>
+   <grammars>
+      <xsd:schema>
+            <xsd:import namespace="http://www.example.org" schemaLocation="../XSD/ERPIntegrationAPI/ERPIntegrationAPI.xsd"/>
+        </xsd:schema>
+   </grammars>
+   <resources>
+      <resource path="/fscmRestApi/resources/11.13.18.05/invoices">
+         <method name="POST" soa:wsdlOperation="Invoice">
+            <request>
+               <representation mediaType="application/json" element="cns:invoiceApiRq" xmlns:cns="http://www.example.org"/>
+            </request>
+            <response status="200">
+               <representation mediaType="application/json" element="cns:invoiceApiRs" xmlns:cns="http://www.example.org"/>
+            </response>
+         </method>
+      </resource>
+      <resource path="/fscmRestApi/resources/11.13.18.05/maintenanceWorkOrders/{workOrderId}/child/WorkOrderDFF/{workOrderId2}">
+         <method name="PATCH" soa:wsdlOperation="UpdateFlexMaintenanceWorkOrders">
+            <request>
+               <representation mediaType="application/json" element="cns:updateFlexMaintenanceWORq" xmlns:cns="http://www.example.org"/>
+            </request>
+            <response status="200">
+               <representation mediaType="application/json" element="cns:updateFlexMaintenanceWORs" xmlns:cns="http://www.example.org"/>
+            </response>
+         </method>
+      </resource>
+   </resources>
+</application>

@@ -1,0 +1,65 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.example.org"
+            targetNamespace="http://www.example.org" elementFormDefault="qualified"
+            xmlns:nxsd="http://xmlns.oracle.com/pcbpel/nxsd" nxsd:version="JSON"  nxsd:encoding="US-ASCII">
+  <xsd:element name="invoiceApiRq">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="name" type="xsd:string"/>
+        <xsd:element name="parameters"  minOccurs="1" maxOccurs="unbounded" >
+          <xsd:complexType>
+            <xsd:sequence>
+
+                    <xsd:element name="InvoiceNumber"  type="xsd:string"/>
+                    <xsd:element name="BusinessUnit" type="xsd:string"/>
+                    <xsd:element name="Supplier" type="xsd:string"/>
+
+            </xsd:sequence>
+          </xsd:complexType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+    <xsd:element name="invoiceApiRs">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="result" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+   <xsd:element name="updateFlexMaintenanceWORq">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="estatusZam" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+    <xsd:element name="updateFlexMaintenanceWORs">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="WorkOrderId" type="xsd:string"/>
+        <xsd:element name="centroDeCosto" type="xsd:string"/>
+        <xsd:element name="ingreso" type="xsd:string"/>
+        <xsd:element name="tallerDeServicio" type="xsd:string"/>
+        <xsd:element name="numeroDeAccidente" type="xsd:string"/>
+        <xsd:element name="responsabilidadTirado" type="xsd:string"/>
+        <xsd:element name="ordenFacturada" type="xsd:string"/>
+        <xsd:element name="Reclasificacion" type="xsd:string"/>
+        <xsd:element name="lectura" type="xsd:string"/>
+        <xsd:element name="ordenPrimariaOSecundaria" type="xsd:string"/>
+        <xsd:element name="comentarios" type="xsd:string"/>
+        <xsd:element name="circuito" type="xsd:string"/>
+        <xsd:element name="pasajeros" type="xsd:string"/>
+        <xsd:element name="operador" type="xsd:string"/>
+        <xsd:element name="reparacionRealizada" type="xsd:string"/>
+        <xsd:element name="observaciones" type="xsd:string"/>
+        <xsd:element name="seMandoGrua" type="xsd:string"/>
+        <xsd:element name="estatusZam" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:annotation xmlns="">
+      <xsd:appinfo>NXSDSAMPLE=</xsd:appinfo>
+      <xsd:appinfo>USEHEADER=false</xsd:appinfo>
+   </xsd:annotation>
+</xsd:schema>

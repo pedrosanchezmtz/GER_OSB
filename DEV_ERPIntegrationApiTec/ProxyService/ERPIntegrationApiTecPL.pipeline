@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:pipelineEntry xmlns:con="http://www.bea.com/wli/sb/pipeline/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:coreEntry>
+        <con:binding type="SOAP" isSoap12="false" xsi:type="con:SoapBindingType">
+            <con:wsdl ref="DEV_ERPIntegrationApiTec/WSDL/ERPIntegrationApiTec"/>
+            <con:binding>
+                <con:name>postInvoicePortTypeSOAP11Binding</con:name>
+                <con:namespace>http://soa.estrellaroja.com.mx/ERPIntegrationApiTec</con:namespace>
+            </con:binding>
+        </con:binding>
+        <con:xqConfiguration>
+            <con:snippetVersion>1.0</con:snippetVersion>
+        </con:xqConfiguration>
+    </con:coreEntry>
+    <con:router errorHandler="error-N3f57fca4.Nf49d130.0.179d400e84c.N7f9b">
+        <con:pipeline type="error" name="error-N3f57fca4.Nf49d130.0.179d400e84c.N7e7d" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+            <con:stage id="_StageId-N3f57fca4.Nf49d130.0.179d400e84c.N7e7c" name="StageErrorHandler">
+                <con:context>
+                    <con2:userNsDecl prefix="erp" namespace="http://soa.estrellaroja.com.mx/ERPIntegrationApiTec"/>
+                    <con2:userNsDecl prefix="cmn" namespace="http://soa.estrellaroja.com.mx/EstrellaRojaCommons"/>
+                </con:context>
+                <con:actions>
+                    <con1:replace varName="body" contents-only="true">
+                        <con2:id>_ActionId-N3f57fca4.Nf49d130.0.179d400e84c.N7e7b</con2:id>
+                        <con1:location>
+                            <con2:xpathText>.</con2:xpathText>
+                        </con1:location>
+                        <con1:expr>
+                            <con2:xqueryText><![CDATA[<erp:postInvoiceRs>
+<cmn:Errors>
+    <cmn:Error>
+      <cmn:ErrorCode>{$fault/ctx:errorCode/text()}</cmn:ErrorCode>
+      <cmn:ShortDescription>{$fault/ctx:reason/text()}</cmn:ShortDescription>
+      <cmn:Description>{fn:concat("Error when invoking ", "postInvoice",$body/soap12-env:Fault/soap12-env:Reason/soap12-env:Text/text())}</cmn:Description>
+      <cmn:BusinessProcess>{"Invoice"}</cmn:BusinessProcess>
+      <cmn:FailedService>{fn:concat("Node: ",$fault/ctx:location/ctx:node/text()," Stage: ",$fault/ctx:location/ctx:stage/text()," Path: ",$fault/ctx:location/ctx:path/text()," Handler: ",$fault/ctx:location/ctx:error-handler/text())}</cmn:FailedService>
+      <cmn:TimeStamp>{fn:current-dateTime()}</cmn:TimeStamp>
+    </cmn:Error>
+  </cmn:Errors>
+  </erp:postInvoiceRs>]]></con2:xqueryText>
+                        </con1:expr>
+                    </con1:replace>
+                    <con2:reply>
+                        <con2:id>_ActionId-N3f57fca4.Nf49d130.0.179d400e84c.N7e7a</con2:id>
+                    </con2:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="request" name="request-N3f57fca4.N43557080.0.17c139cf3c3.N7ec6" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+            <con:stage id="_StageId-N3f57fca4.N43557080.0.17c139cf3c3.N7ec5" name="StageRequest">
+                <con:context>
+                    <con2:userNsDecl prefix="erp" namespace="http://soa.estrellaroja.com.mx/ERPIntegrationApiTec"/>
+                </con:context>
+                <con:actions>
+                    <con1:assign varName="workOrderId">
+                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7e7e</con2:id>
+                        <con1:expr>
+                            <con2:xqueryText>$body/erp:updateFlexMaintenanceWORq/workOrderId</con2:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                    <con1:assign varName="workOrderId2">
+                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7e81</con2:id>
+                        <con1:expr>
+                            <con2:xqueryText>$body/erp:updateFlexMaintenanceWORq/workOrderId2</con2:xqueryText>
+                        </con1:expr>
+                    </con1:assign>
+                    <con1:assign varName="updateFlexMaintenanceWOAPIRq">
+                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7ec4</con2:id>
+                        <con1:expr>
+                            <con2:xsltTransform>
+                                <con2:resource ref="DEV_ERPIntegrationApiTec/XSL/updateFlexMaintenanceWORqToUpdateFlexMaintenanceWOAPIRq"/>
+                                <con2:input>$body/*[1]</con2:input>
+                            </con2:xsltTransform>
+                        </con1:expr>
+                    </con1:assign>
+                    <con1:nxsdTranslation>
+                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7ec3</con2:id>
+                        <con1:type>XML-To-Native</con1:type>
+                        <con1:sourceExpr>
+                            <con2:xqueryText>$updateFlexMaintenanceWOAPIRq</con2:xqueryText>
+                        </con1:sourceExpr>
+                        <con1:nxsd ref="DEV_ERPIntegrationApiTec/XSD/ERPIntegrationAPI/ERPIntegrationAPI"/>
+                        <con1:schemaElement xmlns:exam="http://www.example.org">exam:updateFlexMaintenanceWORq</con1:schemaElement>
+                        <con1:assign-variable>RequestBinaryJSON</con1:assign-variable>
+                    </con1:nxsdTranslation>
+                    <con3:assign varName="RequestBinaryJSON" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7ec2</con2:id>
+                        <con3:expr>
+                            <con2:xqueryText>fn-bea:binary-to-text($RequestBinaryJSON,'UTF-8')</con2:xqueryText>
+                        </con3:expr>
+                    </con3:assign>
+                    <con2:replace contents-only="true" varName="body" xmlns:con1="http://www.bea.com/wli/sb/stages/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config">
+                        <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7ec1</con5:id>
+                        <con2:location>
+                            <con4:xpathText xmlns:con4="http://www.bea.com/wli/sb/stages/config">.</con4:xpathText>
+                        </con2:location>
+                        <con2:expr>
+                            <con5:xqueryText xmlns:con5="http://www.bea.com/wli/sb/stages/config">$RequestBinaryJSON</con5:xqueryText>
+                        </con2:expr>
+                    </con2:replace>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="error" name="error-N3f57fca4.Nf49d130.0.179d400e84c.N7f9b">
+            <con:stage id="_StageId-N3f57fca4.Nf49d130.0.179d400e84c.N7f64" name="StageEh" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+                <con:context>
+                    <con2:userNsDecl prefix="erp" namespace="http://soa.estrellaroja.com.mx/ERPIntegrationServiceTec"/>
+                    <con2:userNsDecl prefix="cmn" namespace="http://soa.estrellaroja.com.mx/EstrellaRojaCommons"/>
+                </con:context>
+                <con:actions>
+                    <con1:replace varName="body" contents-only="true">
+                        <con2:id>_ActionId-N3f57fca4.Nf49d130.0.179d400e84c.N7f63</con2:id>
+                        <con1:location>
+                            <con2:xpathText>.</con2:xpathText>
+                        </con1:location>
+                        <con1:expr>
+                            <con2:xqueryText><![CDATA[<cmn:Errors>
+    <cmn:Error>
+      <cmn:ErrorCode>{$fault/ctx:errorCode/text()}</cmn:ErrorCode>
+      <cmn:ShortDescription>{$fault/ctx:reason/text()}</cmn:ShortDescription>
+      <cmn:Description>{fn:concat("Unhandled exceptions in proxy.", "ErpIntegrationApiTec ",$inbound/ctx:service/ctx:operation,$fault/ctx:details)}</cmn:Description>
+      <cmn:BusinessProcess>{fn:concat("PipelineErpIntegrationTec",$inbound/ctx:service/ctx:operation)}</cmn:BusinessProcess>
+      <cmn:FailedService>{fn:concat("Node: ",$fault/ctx:location/ctx:node/text()," Stage: ",$fault/ctx:location/ctx:stage/text()," Path: ",$fault/ctx:location/ctx:path/text()," Handler: ",$fault/ctx:location/ctx:error-handler/text())}</cmn:FailedService>
+      <cmn:TimeStamp>{fn:current-dateTime()}</cmn:TimeStamp>
+    </cmn:Error>
+  </cmn:Errors>]]></con2:xqueryText>
+                        </con1:expr>
+                    </con1:replace>
+                    <con2:reply isError="false">
+                        <con2:id>_ActionId-N3f57fca4.Nf49d130.0.179d400e84c.N7f62</con2:id>
+                    </con2:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="request" name="request-N3f57fca4.Nf49d130.0.179d400e84c.N7da0" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config"/>
+        <con:pipeline type="error" name="error-N3f57fca4.N43557080.0.17c139cf3c3.N7ebb">
+            <con:stage id="_StageId-N3f57fca4.N43557080.0.17c139cf3c3.N7eba" name="StageErrorHandler" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+                <con:context>
+                    <con2:userNsDecl prefix="erp" namespace="http://soa.estrellaroja.com.mx/ERPIntegrationApiTec"/>
+                    <con2:userNsDecl prefix="cmn" namespace="http://soa.estrellaroja.com.mx/EstrellaRojaCommons"/>
+                </con:context>
+                <con:actions>
+                    <con1:replace varName="body" contents-only="true">
+                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7eb9</con2:id>
+                        <con1:location>
+                            <con2:xpathText>.</con2:xpathText>
+                        </con1:location>
+                        <con1:expr>
+                            <con2:xqueryText><![CDATA[<erp:updateFlexMaintenanceWORs>
+<cmn:Errors>
+    <cmn:Error>
+      <cmn:ErrorCode>{$fault/ctx:errorCode/text()}</cmn:ErrorCode>
+      <cmn:ShortDescription>{$fault/ctx:reason/text()}</cmn:ShortDescription>
+      <cmn:Description>{fn:concat("Error when invoking ", "updateFlexMaintenanceWO",$body/soap12-env:Fault/soap12-env:Reason/soap12-env:Text/text())}</cmn:Description>
+      <cmn:BusinessProcess>{"updateFlexMaintenanceWO"}</cmn:BusinessProcess>
+      <cmn:FailedService>{fn:concat("Node: ",$fault/ctx:location/ctx:node/text()," Stage: ",$fault/ctx:location/ctx:stage/text()," Path: ",$fault/ctx:location/ctx:path/text()," Handler: ",$fault/ctx:location/ctx:error-handler/text())}</cmn:FailedService>
+      <cmn:TimeStamp>{fn:current-dateTime()}</cmn:TimeStamp>
+    </cmn:Error>
+  </cmn:Errors>
+  </erp:updateFlexMaintenanceWORs>]]></con2:xqueryText>
+                        </con1:expr>
+                    </con1:replace>
+                    <con2:reply>
+                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7eb8</con2:id>
+                    </con2:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="error" name="error-N3f57fca4.N43557080.0.17c139cf3c3.N7f57" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+            <con:stage id="_StageId-N3f57fca4.N43557080.0.17c139cf3c3.N7f56" name="StageErrorHandler">
+                <con:context>
+                    <con2:userNsDecl prefix="erp" namespace="http://soa.estrellaroja.com.mx/ERPIntegrationApiTec"/>
+                    <con2:userNsDecl prefix="cmn" namespace="http://soa.estrellaroja.com.mx/EstrellaRojaCommons"/>
+                </con:context>
+                <con:actions>
+                    <con1:replace varName="body" contents-only="true">
+                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7f55</con2:id>
+                        <con1:location>
+                            <con2:xpathText>.</con2:xpathText>
+                        </con1:location>
+                        <con1:expr>
+                            <con2:xqueryText><![CDATA[<erp:postInvoiceRs>
+<cmn:Errors>
+    <cmn:Error>
+      <cmn:ErrorCode>{$fault/ctx:errorCode/text()}</cmn:ErrorCode>
+      <cmn:ShortDescription>{$fault/ctx:reason/text()}</cmn:ShortDescription>
+      <cmn:Description>{fn:concat("Error when invoking ", "postInvoice",$body/soap12-env:Fault/soap12-env:Reason/soap12-env:Text/text())}</cmn:Description>
+      <cmn:BusinessProcess>{"Invoice"}</cmn:BusinessProcess>
+      <cmn:FailedService>{fn:concat("Node: ",$fault/ctx:location/ctx:node/text()," Stage: ",$fault/ctx:location/ctx:stage/text()," Path: ",$fault/ctx:location/ctx:path/text()," Handler: ",$fault/ctx:location/ctx:error-handler/text())}</cmn:FailedService>
+      <cmn:TimeStamp>{fn:current-dateTime()}</cmn:TimeStamp>
+    </cmn:Error>
+  </cmn:Errors>
+  </erp:postInvoiceRs>]]></con2:xqueryText>
+                        </con1:expr>
+                    </con1:replace>
+                    <con2:reply>
+                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7f54</con2:id>
+                    </con2:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-N3f57fca4.Nf49d130.0.179d400e84c.N7e0a" errorHandler="error-N3f57fca4.N79177043.0.179d4da4c90.N7f07" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+            <con:stage id="_StageId-N3f57fca4.Nf49d130.0.179d400e84c.N7c8e" name="StageResponse" xmlns:con1="http://www.bea.com/wli/sb/stages/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config">
+                <con:context>
+                    <con4:userNsDecl prefix="v11" namespace="http://xmlns.erpsol.com/core/esb/data/generic/CommonTypes/v1/" xmlns:con4="http://www.bea.com/wli/sb/stages/config"/>
+                    <con4:userNsDecl prefix="v1" namespace="http://xmlns.erpsol.com/core/esb/con/erpCloud/electronicBilling/v1/" xmlns:con4="http://www.bea.com/wli/sb/stages/config"/>
+                </con:context>
+                <con:actions>
+                    <con2:assign varName="invoiceApiRs">
+                        <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-N3f57fca4.534c87b5.0.179d4a28e46.N7fc4</con5:id>
+                        <con2:expr>
+                            <con5:xqueryText xmlns:con5="http://www.bea.com/wli/sb/stages/config">$body/text()</con5:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con3:nxsdTranslation xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con2:id>_ActionId-N3f57fca4.534c87b5.0.179d4a28e46.N7fc7</con2:id>
+                        <con3:type>Native-To-XML</con3:type>
+                        <con3:sourceExpr>
+                            <con2:xqueryText>$invoiceApiRs</con2:xqueryText>
+                        </con3:sourceExpr>
+                        <con3:nxsd ref="DEV_ERPIntegrationApiTec/XSD/ERPIntegrationAPI/ERPIntegrationAPI"/>
+                        <con3:schemaElement xmlns:exam="http://www.example.org">exam:invoiceApiRs</con3:schemaElement>
+                        <con3:replace-body-content/>
+                        <con3:enforceSchemaOrder>false</con3:enforceSchemaOrder>
+                    </con3:nxsdTranslation>
+                    <con2:replace varName="body" contents-only="true">
+                        <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-N3f57fca4.Nf49d130.0.179d400e84c.N7c8b</con5:id>
+                        <con2:location>
+                            <con1:xpathText xmlns:con4="http://www.bea.com/wli/sb/stages/config">.</con1:xpathText>
+                        </con2:location>
+                        <con2:expr>
+                            <con5:xsltTransform xmlns:con5="http://www.bea.com/wli/sb/stages/config">
+                                <con5:resource ref="DEV_ERPIntegrationApiTec/XSL/invoiceApiRs_to_invoiceRs"/>
+                                <con5:input>$body/*[1]</con5:input>
+                            </con5:xsltTransform>
+                        </con2:expr>
+                    </con2:replace>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="error" name="error-N3f57fca4.N79177043.0.179d4da4c90.N7f07">
+            <con:stage id="_StageId-N3f57fca4.N79177043.0.179d4da4c90.N7e0a" name="StageErrorHandler" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+                <con:context>
+                    <con2:userNsDecl prefix="erp" namespace="http://soa.estrellaroja.com.mx/ERPIntegrationApiTec"/>
+                    <con2:userNsDecl prefix="cmn" namespace="http://soa.estrellaroja.com.mx/EstrellaRojaCommons"/>
+                </con:context>
+                <con:actions>
+                    <con1:replace varName="body" contents-only="true">
+                        <con2:id>_ActionId-N3f57fca4.N79177043.0.179d4da4c90.N7e09</con2:id>
+                        <con1:location>
+                            <con2:xpathText>.</con2:xpathText>
+                        </con1:location>
+                        <con1:expr>
+                            <con2:xqueryText><![CDATA[<erp:postInvoiceRs>
+<cmn:Errors>
+    <cmn:Error>
+      <cmn:ErrorCode>{$fault/ctx:errorCode/text()}</cmn:ErrorCode>
+      <cmn:ShortDescription>{$fault/ctx:reason/text()}</cmn:ShortDescription>
+      <cmn:Description>{fn:concat("Error when invoking ", "postInvoice",$body/soap12-env:Fault/soap12-env:Reason/soap12-env:Text/text())}</cmn:Description>
+      <cmn:BusinessProcess>{"Invoice"}</cmn:BusinessProcess>
+      <cmn:FailedService>{fn:concat("Node: ",$fault/ctx:location/ctx:node/text()," Stage: ",$fault/ctx:location/ctx:stage/text()," Path: ",$fault/ctx:location/ctx:path/text()," Handler: ",$fault/ctx:location/ctx:error-handler/text())}</cmn:FailedService>
+      <cmn:TimeStamp>{fn:current-dateTime()}</cmn:TimeStamp>
+    </cmn:Error>
+  </cmn:Errors>
+  </erp:postInvoiceRs>]]></con2:xqueryText>
+                        </con1:expr>
+                    </con1:replace>
+                    <con2:reply>
+                        <con2:id>_ActionId-N3f57fca4.N79177043.0.179d4da4c90.N7e08</con2:id>
+                    </con2:reply>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="request" name="request-N3f57fca4.Nf49d130.0.179d400e84c.N7e0d" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+            <con:stage id="_StageId-N3f57fca4.Nf49d130.0.179d400e84c.N7c26" name="StageRequest">
+                <con:context>
+                    <con2:userNsDecl prefix="erp" namespace="http://soa.estrellaroja.com.mx/ERPIntegrationApiTec"/>
+                </con:context>
+                <con:actions>
+                    <con1:assign varName="invoiceApiRq">
+                        <con2:id>_ActionId-N3f57fca4.534c87b5.0.179d4a28e46.N7fc1</con2:id>
+                        <con1:expr>
+                            <con2:xsltTransform>
+                                <con2:resource ref="DEV_ERPIntegrationApiTec/XSL/invoiceApiRq_to_invoiceRq"/>
+                                <con2:input>$body/*[1]</con2:input>
+                            </con2:xsltTransform>
+                        </con1:expr>
+                    </con1:assign>
+                    <con1:nxsdTranslation>
+                        <con2:id>_ActionId-N3f57fca4.534c87b5.0.179d4a28e46.N7ffe</con2:id>
+                        <con1:type>XML-To-Native</con1:type>
+                        <con1:sourceExpr>
+                            <con2:xqueryText>$invoiceApiRq</con2:xqueryText>
+                        </con1:sourceExpr>
+                        <con1:nxsd ref="DEV_ERPIntegrationApiTec/XSD/ERPIntegrationAPI/ERPIntegrationAPI"/>
+                        <con1:schemaElement xmlns:exam="http://www.example.org">exam:invoiceApiRq</con1:schemaElement>
+                        <con1:assign-variable>RequestBinaryJSON</con1:assign-variable>
+                    </con1:nxsdTranslation>
+                    <con3:assign varName="RequestBinaryJSON" xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con2:id>_ActionId-N3f57fca4.534c87b5.0.179d4a28e46.N7ffb</con2:id>
+                        <con3:expr>
+                            <con2:xqueryText>fn-bea:binary-to-text($RequestBinaryJSON,'UTF-8')</con2:xqueryText>
+                        </con3:expr>
+                    </con3:assign>
+                    <con2:replace contents-only="true" varName="body" xmlns:con1="http://www.bea.com/wli/sb/stages/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config">
+                        <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-N3f57fca4.Nf49d130.0.179d400e84c.N7cfa</con5:id>
+                        <con2:location>
+                            <con4:xpathText xmlns:con4="http://www.bea.com/wli/sb/stages/config">.</con4:xpathText>
+                        </con2:location>
+                        <con2:expr>
+                            <con5:xqueryText xmlns:con5="http://www.bea.com/wli/sb/stages/config">$RequestBinaryJSON</con5:xqueryText>
+                        </con2:expr>
+                    </con2:replace>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-N3f57fca4.Nf49d130.0.179d400e84c.N7d9f" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+            <con:stage id="_StageId-N3f57fca4.Nf49d130.0.179d400e84c.N7d9e" name="Stage1">
+                <con:context>
+                    <con2:userNsDecl prefix="cmn" namespace="http://soa.estrellaroja.com.mx/EstrellaRojaCommons"/>
+                </con:context>
+                <con:actions>
+                    <con1:replace varName="body">
+                        <con2:id>_ActionId-N3f57fca4.Nf49d130.0.179d400e84c.N7d9d</con2:id>
+                        <con1:location>
+                            <con2:xpathText>.</con2:xpathText>
+                        </con1:location>
+                        <con1:expr>
+                            <con2:xqueryText><![CDATA[<cmn:Errors>
+ <cmn:Error>
+   <cmn:ErrorCode>"E001"</cmn:ErrorCode>
+   <cmn:ShortDescription>"InvalidOperation"</cmn:ShortDescription>
+   <cmn:Description>"Specified operation not found in proxy. "</cmn:Description>
+   <cmn:BusinessProcess>"ErpIntegrationApiTecPs"</cmn:BusinessProcess>
+   <cmn:FailedService>"ERPIntegrationApiTecPs"</cmn:FailedService>
+   <cmn:TimeStamp>{fn:current-dateTime()}</cmn:TimeStamp>
+ </cmn:Error>
+</cmn:Errors>]]></con2:xqueryText>
+                        </con1:expr>
+                    </con1:replace>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:pipeline type="response" name="response-N3f57fca4.N43557080.0.17c139cf3c3.N7ec0" errorHandler="error-N3f57fca4.N43557080.0.17c139cf3c3.N7ebb" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+            <con:stage id="_StageId-N3f57fca4.N43557080.0.17c139cf3c3.N7ebf" name="StageResponse" xmlns:con1="http://www.bea.com/wli/sb/stages/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config">
+                <con:context>
+                    <con4:userNsDecl prefix="v11" namespace="http://xmlns.erpsol.com/core/esb/data/generic/CommonTypes/v1/" xmlns:con4="http://www.bea.com/wli/sb/stages/config"/>
+                    <con4:userNsDecl prefix="v1" namespace="http://xmlns.erpsol.com/core/esb/con/erpCloud/electronicBilling/v1/" xmlns:con4="http://www.bea.com/wli/sb/stages/config"/>
+                </con:context>
+                <con:actions>
+                    <con2:assign varName="updateFlexMaintenanceWOAPIRs">
+                        <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7ebe</con5:id>
+                        <con2:expr>
+                            <con5:xqueryText xmlns:con5="http://www.bea.com/wli/sb/stages/config">$body/text()</con5:xqueryText>
+                        </con2:expr>
+                    </con2:assign>
+                    <con3:nxsdTranslation xmlns:con1="http://www.bea.com/wli/sb/stages/routing/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/transform/config">
+                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7ebd</con2:id>
+                        <con3:type>Native-To-XML</con3:type>
+                        <con3:sourceExpr>
+                            <con2:xqueryText>$updateFlexMaintenanceWOAPIRs</con2:xqueryText>
+                        </con3:sourceExpr>
+                        <con3:nxsd ref="DEV_ERPIntegrationApiTec/XSD/ERPIntegrationAPI/ERPIntegrationAPI"/>
+                        <con3:schemaElement xmlns:exam="http://www.example.org">exam:updateFlexMaintenanceWORs</con3:schemaElement>
+                        <con3:replace-body-content/>
+                        <con3:enforceSchemaOrder>false</con3:enforceSchemaOrder>
+                    </con3:nxsdTranslation>
+                    <con2:replace varName="body" contents-only="true">
+                        <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7ebc</con5:id>
+                        <con2:location>
+                            <con1:xpathText xmlns:con4="http://www.bea.com/wli/sb/stages/config">.</con1:xpathText>
+                        </con2:location>
+                        <con2:expr>
+                            <con5:xsltTransform xmlns:con5="http://www.bea.com/wli/sb/stages/config">
+                                <con5:resource ref="DEV_ERPIntegrationApiTec/XSL/updateFlexMaintenanceWOAPIRsToUpdateFlexMaintenanceWORs"/>
+                                <con5:input>$body/*[1]</con5:input>
+                            </con5:xsltTransform>
+                        </con2:expr>
+                    </con2:replace>
+                </con:actions>
+            </con:stage>
+        </con:pipeline>
+        <con:flow>
+            <con:branch-node type="operation" id="_FlowId-N3f57fca4.Nf49d130.0.179d400e84c.N7ec5" name="BranchNode1">
+                <con:context/>
+                <con:branch-table>
+                    <con:branch name="postInvoice">
+                        <con:operator>equals</con:operator>
+                        <con:value/>
+                        <con:flow>
+                            <con:pipeline-node name="Pipeline Pair Node1" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+                                <con:request>request-N3f57fca4.Nf49d130.0.179d400e84c.N7e0d</con:request>
+                                <con:response>response-N3f57fca4.Nf49d130.0.179d400e84c.N7e0a</con:response>
+                            </con:pipeline-node>
+                            <con:route-node name="RouteNode1" error-handler="error-N3f57fca4.Nf49d130.0.179d400e84c.N7e7d" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+                                <con:context>
+                                    <con2:userNsDecl prefix="erp" namespace="http://soa.estrellaroja.com.mx/ERPIntegrationApiTec"/>
+                                    <con2:userNsDecl prefix="ns0" namespace="http://xmlns.oracle.com/pcbpel/adapter/erp/ErpIntegrationServiceTec/ERPIntegrationServiceTec/erpRefCreateCustProfile/types"/>
+                                </con:context>
+                                <con:actions>
+                                    <con3:route>
+                                        <con2:id>_ActionId-N3f57fca4.Nf49d130.0.179d400e84c.N7e80</con2:id>
+                                        <con3:service ref="DEV_ERPIntegrationApiTec/BusinessService/ERPIntegrationAPI" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                        <con3:operation>invoice</con3:operation>
+                                        <con3:outboundTransform>
+                                            <con2:transport-headers copy-all="true" xmlns:con1="http://www.bea.com/wli/sb/stages/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config">
+                                                <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-N3f57fca4.Nf49d130.0.179d400e84c.N7d66</con5:id>
+                                                <con2:header-set>outbound-request</con2:header-set>
+                                                <con2:header value="expression" name="Content-Type">
+                                                    <con5:xqueryText xmlns:con5="http://www.bea.com/wli/sb/stages/config">'application/vnd.oracle.adf.action+json'</con5:xqueryText>
+                                                </con2:header>
+                                                <con2:header value="expression" name="http-method">
+                                                    <con4:xqueryText xmlns:con4="http://www.bea.com/wli/sb/stages/config">'POST'</con4:xqueryText>
+                                                </con2:header>
+                                            </con2:transport-headers>
+                                        </con3:outboundTransform>
+                                        <con3:responseTransform/>
+                                    </con3:route>
+                                </con:actions>
+                            </con:route-node>
+                        </con:flow>
+                    </con:branch>
+                    <con:branch name="updateFlexMaintenanceWO">
+                        <con:operator>equals</con:operator>
+                        <con:value/>
+                        <con:flow>
+                            <con:pipeline-node name="Pipeline Pair UpdateFlexMaintenanceWO" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+                                <con:request>request-N3f57fca4.N43557080.0.17c139cf3c3.N7ec6</con:request>
+                                <con:response>response-N3f57fca4.N43557080.0.17c139cf3c3.N7ec0</con:response>
+                            </con:pipeline-node>
+                            <con:route-node name="RouteNode2" error-handler="error-N3f57fca4.N43557080.0.17c139cf3c3.N7f57" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+                                <con:context>
+                                    <con2:userNsDecl prefix="erp" namespace="http://soa.estrellaroja.com.mx/ERPIntegrationApiTec"/>
+                                    <con2:userNsDecl prefix="ns0" namespace="http://xmlns.oracle.com/pcbpel/adapter/erp/ErpIntegrationServiceTec/ERPIntegrationServiceTec/erpRefCreateCustProfile/types"/>
+                                </con:context>
+                                <con:actions>
+                                    <con3:route>
+                                        <con2:id>_ActionId-N3f57fca4.N43557080.0.17c139cf3c3.N7f59</con2:id>
+                                        <con3:service ref="DEV_ERPIntegrationApiTec/BusinessService/ERPIntegrationAPI" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+                                        <con3:operation>UpdateFlexMaintenanceWorkOrders</con3:operation>
+                                        <con3:outboundTransform>
+                                            <con1:routing-options>
+                                                <con2:id>_ActionId-N3f57fca4.1b04f45f.0.17c158f32e4.N7ffa</con2:id>
+                                                <con1:uriExpr>
+                                                    <con2:xqueryText>concat('https://egte-test.fa.us2.oraclecloud.com/fscmRestApi/resources/11.13.18.05/maintenanceWorkOrders/',$workOrderId,'/child/WorkOrderDFF/',$workOrderId2)</con2:xqueryText>
+                                                </con1:uriExpr>
+                                                <con1:mode>request-response</con1:mode>
+                                                <con1:qualityOfService>best-effort</con1:qualityOfService>
+                                            </con1:routing-options>
+                                            <con2:transport-headers copy-all="true" xmlns:con1="http://www.bea.com/wli/sb/stages/config" xmlns:con2="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con3="http://www.bea.com/wli/sb/stages/logging/config">
+                                                <con5:id xmlns:con5="http://www.bea.com/wli/sb/stages/config">_ActionId-N3f57fca4.1b04f45f.0.17c158f32e4.N7fc5</con5:id>
+                                                <con2:header-set>outbound-request</con2:header-set>
+                                                <con2:header value="expression" name="Content-Type">
+                                                    <con5:xqueryText xmlns:con5="http://www.bea.com/wli/sb/stages/config">'application/json'</con5:xqueryText>
+                                                </con2:header>
+                                                <con2:header value="expression" name="http-method">
+                                                    <con5:xqueryText xmlns:con5="http://www.bea.com/wli/sb/stages/config">'PATCH'</con5:xqueryText>
+                                                </con2:header>
+                                            </con2:transport-headers>
+                                        </con3:outboundTransform>
+                                        <con3:responseTransform/>
+                                    </con3:route>
+                                </con:actions>
+                            </con:route-node>
+                        </con:flow>
+                    </con:branch>
+                    <con:default-branch>
+                        <con:flow>
+                            <con:pipeline-node name="Pipeline Pair Node2" xmlns:con1="http://www.bea.com/wli/sb/stages/transform/config" xmlns:con4="http://www.bea.com/wli/sb/stages/logging/config" xmlns:con2="http://www.bea.com/wli/sb/stages/config" xmlns:con3="http://www.bea.com/wli/sb/stages/routing/config">
+                                <con:request>request-N3f57fca4.Nf49d130.0.179d400e84c.N7da0</con:request>
+                                <con:response>response-N3f57fca4.Nf49d130.0.179d400e84c.N7d9f</con:response>
+                            </con:pipeline-node>
+                        </con:flow>
+                    </con:default-branch>
+                </con:branch-table>
+            </con:branch-node>
+        </con:flow>
+        <con:partner-links>
+            <con:partner-link>
+                <con:service ref="DEV_ERPIntegrationApiTec/ERPIntegrationAPIRest" xsi:type="ref:BusinessServiceRef" xmlns:ref="http://www.bea.com/wli/sb/reference"/>
+            </con:partner-link>
+        </con:partner-links>
+    </con:router>
+</con:pipelineEntry>
